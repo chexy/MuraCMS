@@ -71,54 +71,58 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 <cffunction name="export">
 	<cfargument name="siteid" type="string" required="true" />
 	<cfargument name="exportDir" type="string" required="true" />
-
+	
 	<cfset var $=getBean("MuraScope").init(arguments.siteID)>
-
+	<cfset var directoryDelimiter = variables.configBean.getFileDelim()>
+	
 	<cfsetting requestTimeout = "7200">
 	
 	<cfif listFind("/,\",right(arguments.exportDir,1))>
 		<cfset arguments.exportDir=left(arguments.exportDir, len(arguments.exportDir)-1 )>
 	</cfif>
 	
-	<cfif directoryExists("#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/")>
-		<cfset variables.fileWriter.deleteDir("#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/")>
+	<cfif directoryExists("#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#")>
+		<cfset variables.fileWriter.deleteDir("#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#")>
 	</cfif>
 	
 	<cfif len($.globalConfig("context"))>
 		<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig("context")#")>
 	</cfif>
 	
-	<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig("context")#/#arguments.siteID#")>
+	<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig("context")##directoryDelimiter##arguments.siteID#")>
+	<cfset localval = "#$.globalConfig('webroot')##directoryDelimiter##arguments.siteid##directoryDelimiter#css#directoryDelimiter#">
+	<cfset localval = localval & " to " & "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#css#directoryDelimiter#">
 	
-	<cfset variables.fileWriter.copyDir("#$.globalConfig('webroot')#/#arguments.siteid#/css/", "#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/css/") />
-	<cfset variables.fileWriter.copyDir("#$.globalConfig('webroot')#/#arguments.siteid#/flash/", "#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/flash/") />
-	<cfset variables.fileWriter.copyDir("#$.globalConfig('webroot')#/#arguments.siteid#/images/", "#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/images/") />
-	<cfset variables.fileWriter.copyDir("#$.globalConfig('webroot')#/#arguments.siteid#/js/", "#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/js/") />
-	<cfset variables.fileWriter.copyDir("#$.globalConfig('assetDir')#/#arguments.siteid#/assets/", "#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/assets/") />
+	<cfset variables.fileWriter.copyDir("#$.globalConfig('webroot')##directoryDelimiter##arguments.siteid##directoryDelimiter#css#directoryDelimiter#", "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#css#directoryDelimiter#") />
+	<cfset variables.fileWriter.copyDir("#$.globalConfig('webroot')##directoryDelimiter##arguments.siteid##directoryDelimiter#flash#directoryDelimiter#", "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#flash#directoryDelimiter#") />
+	<cfset variables.fileWriter.copyDir("#$.globalConfig('webroot')##directoryDelimiter##arguments.siteid##directoryDelimiter#images#directoryDelimiter#", "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#images#directoryDelimiter#") />
+	<cfset variables.fileWriter.copyDir("#$.globalConfig('webroot')##directoryDelimiter##arguments.siteid##directoryDelimiter#js#directoryDelimiter#", "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#js#directoryDelimiter#") />
+	<cfset variables.fileWriter.copyDir("#$.globalConfig('assetDir')##directoryDelimiter##arguments.siteid##directoryDelimiter#assets#directoryDelimiter#", "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#assets#directoryDelimiter#") />
+	<!--- Add jquery to the export --->
+	<cfset variables.fileWriter.copyDir("#$.globalConfig('assetDir')##directoryDelimiter##arguments.siteid##directoryDelimiter#jquery#directoryDelimiter#", "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#jquery#directoryDelimiter#") />
 	
-	<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/includes")>
-	<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/includes/themes")>
+	<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#includes")>
+	<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#includes#directoryDelimiter#themes")>
 
-	<!---<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/includes/themes/#$.siteConfig('theme')#")>--->
-	<cfset variables.fileWriter.copyDir(expandPath("#$.siteConfig('themeIncludePath')#/"), "#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/includes/themes/#$.siteConfig('theme')#/") />
+	<!---<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#includes#directoryDelimiter#themes#directoryDelimiter##$.siteConfig('theme')#")>--->
+	<cfset variables.fileWriter.copyDir(expandPath("#$.siteConfig('themeIncludePath')##directoryDelimiter#"), "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#includes#directoryDelimiter#themes#directoryDelimiter##$.siteConfig('theme')##directoryDelimiter#") />
 	
-	<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/cache")>
-	<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/cache/file")>
+	<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#cache")>
+	<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#cache#directoryDelimiter#file")>
 
-	<!---
-	<cfif directoryExists("#$.siteConfig('themeIncludePath')#/css")>
-		<cfset variables.fileWriter.copyDir(expandPath("#$.siteConfig('themeIncludePath')#/css/"), "#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/includes/themes/#$.siteConfig('theme')#/css/") />
+	<cfif directoryExists("#$.siteConfig('themeIncludePath')##directoryDelimiter#css")>
+		<cfset variables.fileWriter.copyDir(expandPath("#$.siteConfig('themeIncludePath')##directoryDelimiter#css#directoryDelimiter#"), "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#includes#directoryDelimiter#themes#directoryDelimiter##$.siteConfig('theme')##directoryDelimiter#css#directoryDelimiter#") />
 	</cfif>
-	<cfif directoryExists("#$.siteConfig('themeIncludePath')#/flash")>
-		<cfset variables.fileWriter.copyDir(expandPath("#$.siteConfig('themeIncludePath')#/flash/"), "#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/includes/themes/#$.siteConfig('theme')#/flash/") />
+	<cfif directoryExists("#$.siteConfig('themeIncludePath')##directoryDelimiter#flash")>
+		<cfset variables.fileWriter.copyDir(expandPath("#$.siteConfig('themeIncludePath')##directoryDelimiter#flash#directoryDelimiter#"), "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#includes#directoryDelimiter#themes#directoryDelimiter##$.siteConfig('theme')##directoryDelimiter#flash#directoryDelimiter#") />
 	</cfif>
-	<cfif directoryExists("#$.siteConfig('themeIncludePath')#/images")>
-		<cfset variables.fileWriter.copyDir(expandPath("#$.siteConfig('themeIncludePath')#/images/"), "#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/includes/themes/#$.siteConfig('theme')#/images/") />
+	<cfif directoryExists("#$.siteConfig('themeIncludePath')##directoryDelimiter#images")>
+		<cfset variables.fileWriter.copyDir(expandPath("#$.siteConfig('themeIncludePath')##directoryDelimiter#images#directoryDelimiter#"), "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#includes#directoryDelimiter#themes#directoryDelimiter##$.siteConfig('theme')##directoryDelimiter#images#directoryDelimiter#") />
 	</cfif>
-	<cfif directoryExists("#$.siteConfig('themeIncludePath')#/js")>
-		<cfset variables.fileWriter.copyDir(expandPath("#$.siteConfig('themeIncludePath')#/js/"), "#arguments.exportDir##$.globalConfig('context')#/#arguments.siteID#/includes/themes/#$.siteConfig('theme')#/js/") />
+	<cfif directoryExists("#$.siteConfig('themeIncludePath')##directoryDelimiter#js")>
+		<cfset variables.fileWriter.copyDir(expandPath("#$.siteConfig('themeIncludePath')##directoryDelimiter#js#directoryDelimiter#"), "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.siteID##directoryDelimiter#includes#directoryDelimiter#themes#directoryDelimiter##$.siteConfig('theme')##directoryDelimiter#js#directoryDelimiter#") />
 	</cfif>
-	--->
+	<cfset localval = expandPath("#$.siteConfig('themeIncludePath')##directoryDelimiter#images#directoryDelimiter#")>
 	
 	<cfset traverseSite('00000000000000000000000000000000END', arguments.siteid, arguments.exportDir) />
 	
@@ -164,6 +168,7 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 	<cfset var i = "" />
 	<cfset var $=getBean("MuraScope").init(arguments.contentBean.getSiteID())>
 	<cfset var newdir="">
+	<cfset var directoryDelimiter = variables.configBean.getFileDelim()>
 	
 	<cfif listFind("/,\",right(arguments.exportDir,1))>
 		<cfset arguments.exportDir=left(arguments.exportDir, len(arguments.exportDir)-1 )>
@@ -183,15 +188,15 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 			<cfset fileOutput=variables.contentServer.doRequest(request.servletEvent)>
 			
 			<cfif variables.configBean.getSiteIDInURLS()>
-				<cfset filePath = "#arguments.exportDir##$.globalConfig('context')#/#arguments.contentBean.getSiteID()#/#arguments.contentBean.getFilename()#/index.html">
+				<cfset filePath = "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.contentBean.getSiteID()##directoryDelimiter##arguments.contentBean.getFilename()##directoryDelimiter#index.html">
 			<cfelse>
-				<cfset filePath = "#arguments.exportDir##$.globalConfig('context')#/#arguments.contentBean.getFilename()#/index.html">
+				<cfset filePath = "#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.contentBean.getFilename()##directoryDelimiter#index.html">
 			</cfif>
 			
 			<cfif variables.configBean.getSiteIDInURLS()>
-				<cfset newdir="#arguments.exportDir##$.globalConfig('context')#/#arguments.contentBean.getSiteID()#/#arguments.contentBean.getFilename()#">
+				<cfset newdir="#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.contentBean.getSiteID()##directoryDelimiter##arguments.contentBean.getFilename()#">
 			<cfelse>
-				<cfset newdir="#arguments.exportDir##$.globalConfig('context')#/#arguments.contentBean.getFilename()#">
+				<cfset newdir="#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.contentBean.getFilename()#">
 			</cfif>
 			
 			<cfif not directoryExists(newdir)>
@@ -207,14 +212,14 @@ version 2 without this exception.  You may, if you choose, apply this exception 
 	
 	<cfif len(arguments.contentBean.getFileID())>
 			<cfif arguments.contentBean.getType() eq "File">
-				<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig('context')#/#arguments.contentBean.getSiteID()#/cache/file/#arguments.contentBean.getFileID()#")>
-				<cfset variables.fileWriter.copyFile(source="#$.globalConfig('fileDir')#/#arguments.contentBean.getSiteID()#/cache/file/#arguments.contentBean.getFileID()#.#arguments.contentBean.getFileEXT()#", destination="#arguments.exportDir##$.globalConfig('context')#/#arguments.contentBean.getSiteID()#/cache/file/#arguments.contentBean.getFileID()#/#arguments.contentBean.getAssocFilename()#")>
+				<cfset variables.fileWriter.createDir("#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.contentBean.getSiteID()##directoryDelimiter#cache#directoryDelimiter#file#directoryDelimiter##arguments.contentBean.getFileID()#")>
+				<cfset variables.fileWriter.copyFile(source="#$.globalConfig('fileDir')##directoryDelimiter##arguments.contentBean.getSiteID()##directoryDelimiter#cache#directoryDelimiter#file#directoryDelimiter##arguments.contentBean.getFileID()#.#arguments.contentBean.getFileEXT()#", destination="#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.contentBean.getSiteID()##directoryDelimiter#cache#directoryDelimiter#file#directoryDelimiter##arguments.contentBean.getFileID()##directoryDelimiter##arguments.contentBean.getAssocFilename()#")>
 			</cfif>
 			
 			<cfif listFindNoCase("jpg,jpeg,gif,png",arguments.contentBean.getFileEXT())>
-				<cfdirectory action="list" directory="#$.globalConfig('fileDir')#/#arguments.contentBean.getSiteID()#/cache/file" filter="#arguments.contentBean.getFileID()#*" name="rsFiles">
+				<cfdirectory action="list" directory="#$.globalConfig('fileDir')##directoryDelimiter##arguments.contentBean.getSiteID()##directoryDelimiter#cache#directoryDelimiter#file" filter="#arguments.contentBean.getFileID()#*" name="rsFiles">
 				<cfloop query="rsFiles">
-					<cfset variables.fileWriter.copyFile(source="#$.globalConfig('fileDir')#/#arguments.contentBean.getSiteID()#/cache/file/#rsFiles.name#", destination="#arguments.exportDir##$.globalConfig('context')#/#arguments.contentBean.getSiteID()#/cache/file/#rsFiles.name#")>
+					<cfset variables.fileWriter.copyFile(source="#$.globalConfig('fileDir')##directoryDelimiter##arguments.contentBean.getSiteID()##directoryDelimiter#cache#directoryDelimiter#file#directoryDelimiter##rsFiles.name#", destination="#arguments.exportDir##$.globalConfig('context')##directoryDelimiter##arguments.contentBean.getSiteID()##directoryDelimiter#cache#directoryDelimiter#file#directoryDelimiter##rsFiles.name#")>
 				</cfloop>
 			</cfif>
 	</cfif>
